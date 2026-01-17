@@ -1,7 +1,7 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Auth-Token");
 header("Content-Type: application/json; charset=UTF-8");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -15,6 +15,15 @@ try {
     $pdo = getDB();
 
     $data = json_decode(file_get_contents("php://input"), true);
+    if (!is_array($data)) {
+        $data = [];
+    }
+    if (isset($_POST['username'])) {
+        $data['username'] = $_POST['username'];
+    }
+    if (isset($_POST['password'])) {
+        $data['password'] = $_POST['password'];
+    }
     
     if (!isset($data['username']) || !isset($data['password'])) {
         throw new Exception("Missing credentials");
